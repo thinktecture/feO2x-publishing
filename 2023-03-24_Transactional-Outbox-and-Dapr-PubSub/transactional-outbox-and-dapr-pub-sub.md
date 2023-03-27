@@ -132,6 +132,8 @@ Consider a kubernetes cluster with Dapr support: one or more instances of a serv
 
 So for things to go awry, your sidecar must be down. But these are built with robustness in mind. Once a Dapr sidecar is up and running, it will likely not fail. It is a technical microservice which has no business logic. If you have Kubernetes set up correctly with health checks and resource constraints, it will just deal with it. I do not want to rule out that Dapr Pub-Sub might contain bugs, but if you execute integration and load tests during development, you will probably not run into them in production. You as a software architect must decide if the additional investment to implement the Transactional Outbox pattern is worth the effort.
 
+My two cents: if you run on a properly configured Kubernetes cluster, you can get away without the Transactional Outbox pattern. If you use dapper in other contexts, for example simple docker-compose on Raspberry Pi(s), I would tend to implement a Transactional Outbox pattern - especially if I must not loose any events.  
+
 ## TLDR; - Too Long, Didn't Read
 
 The Transactional Outbox pattern is the safest way to not loose events in a distributed system. When implementing it, you should consider the following points:
@@ -139,6 +141,6 @@ The Transactional Outbox pattern is the safest way to not loose events in a dist
 - Can you afford the performance overhead? The additional database round trips might affect scalability.
 - Can you afford to implement it? Especially an efficient and robust outbox processor can be tricky. Expect little to no framework/library support in the .NET ecosystem (the only one I know is [CosmosDB](https://learn.microsoft.com/en-us/azure/architecture/best-practices/transactional-outbox-cosmos)).
 - How important is not loosing events in your domain? This can range from some missing notifications in a web frontend to orders not being processed properly.
-- How likely is it that all involved processes are unavailable at the same time? Are the resiliency features of your existing infrastructure enough for your project?
+- How likely is it that all involved processes are unavailable at the same time? Are the resiliency features of your existing infrastructure good enough for your project?
 
 As always, the correct answer is: "it depends". I hope this post gave you enough food for thought to make the right decisions for your project.
