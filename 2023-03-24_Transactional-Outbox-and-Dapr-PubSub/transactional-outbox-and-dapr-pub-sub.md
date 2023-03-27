@@ -130,7 +130,7 @@ Consider a kubernetes cluster with Dapr support: one or more instances of a serv
 
 ![A part of a Kubernetes cluster showing three service instances talking to a message broker via a Dapr sidecar service - how like is it that the two latter services fail at the same time](transactional-outbox-dapr.png)
 
-So for things to go awry, your sidecar must be down. But these are built with robustness in mind. Once a Dapr sidecar is up and running, it will likely not fail. It is a technical microservice which has no business logic. If you have Kubernetes set up correctly with health checks and resource constraints, it will just deal with it. I do not want to rule out that Dapr Pub-Sub might contain bugs, but if you execute integration and load tests, you will probably not run into them. You as a software architect must decide if the additional investment to implement the Transactional Outbox pattern is worth the effort.
+So for things to go awry, your sidecar must be down. But these are built with robustness in mind. Once a Dapr sidecar is up and running, it will likely not fail. It is a technical microservice which has no business logic. If you have Kubernetes set up correctly with health checks and resource constraints, it will just deal with it. I do not want to rule out that Dapr Pub-Sub might contain bugs, but if you execute integration and load tests during development, you will probably not run into them in production. You as a software architect must decide if the additional investment to implement the Transactional Outbox pattern is worth the effort.
 
 ## TLDR; - Too Long, Didn't Read
 
