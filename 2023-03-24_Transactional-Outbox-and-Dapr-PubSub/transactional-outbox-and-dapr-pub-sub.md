@@ -1,5 +1,18 @@
 # Transactional Outbox and Dapr Pub-Sub: Yes or No?
 
+## TLDR; - Too Long, Didn't Read
+
+The Transactional Outbox pattern is the safest way to not lose events in a distributed system. Instead of saving to the database and afterwards publishing an event to a message broker, you also save all necessary event data to an outbox table in the same database to benefit from its transactional capabilities. A single outbox processor then loads these outbox items and sends them to the message broker. Using this pattern, you can greatly reduce the risk of losing events.
+
+When implementing it, you should consider the following points:
+
+- Can you afford the performance overhead? The additional database round trips might affect scalability.
+- Can you afford to implement it? Especially an efficient and robust outbox processor can be tricky. Expect little to no framework/library support in the .NET ecosystem (the only one I know is [CosmosDB](https://learn.microsoft.com/en-us/azure/architecture/best-practices/transactional-outbox-cosmos)).
+- How important is not losing events in your domain? This can range from some missing notifications in a web frontend to orders not being processed properly.
+- How likely is it that all involved processes are unavailable at the same time? Are the resiliency features of your existing infrastructure good enough for your project, e.g. a properly configured Kubernetes cluster with Dapr sidecars for your services?
+
+Keep these points in mind when deciding on implementing the Transactional Outbox pattern in your project.
+
 ## Problem statement
 
 It is a common scenario in distributed systems: a service finishes one step of a workflow, the corresponding data is saved and the service then publishes an event to a message broker so that other decoupled systems can continue with the next workflow steps. A simplified endpoint for an order system might look like this in ASP.NET Core Minimal APIs:
@@ -126,21 +139,12 @@ This all sounds promising, but should you simply use the Transactional Outbox pa
 
 A good place for the outbox processor would be in a framework like Dapr which runs as a separate sidecar process next to your service (replicas), but unfortunately, it does not support this pattern out of the box (there is a [GitHub issue](https://github.com/dapr/dapr/issues/4233) for it). However, I also want to shortly discuss how your system architecture can mitigate the Transactional Outbox pattern.
 
-Consider a kubernetes cluster with Dapr support: one or more instances of a service want to publish events via the accompanied Dapr sidecar. The message broker is either hosted as a cloud service (e.g. Azure Service Bus) or hosted as another pod in the cluster. What would need to happen so that you loose events? Let us make a thought experiment: if the broker is down, as long as your sidecar is up and running and you have it configured for [resiliency](https://docs.dapr.io/operations/resiliency/resiliency-overview/), it will just publish all pending events once the broker is back online.
+Consider a kubernetes cluster with Dapr support: one or more instances of a service want to publish events via the accompanied Dapr sidecar. The message broker is either hosted as a cloud service (e.g. Azure Service Bus) or hosted as another pod in the cluster. What would need to happen so that you lose events? Let us make a thought experiment: if the broker is down, as long as your sidecar is up and running and you have it configured for [resiliency](https://docs.dapr.io/operations/resiliency/resiliency-overview/), it will just publish all pending events once the broker is back online.
 
-![A part of a Kubernetes cluster showing three service instances talking to a message broker via a Dapr sidecar service - how like is it that the two latter services fail at the same time](transactional-outbox-dapr.png)
+![A part of a Kubernetes cluster showing three service instances talking to a message broker via a Dapr sidecar service - how likely is it that the two latter services fail at the same time](transactional-outbox-dapr.png)
 
 So for things to go awry, your sidecar must be down. But these are built with robustness in mind. Once a Dapr sidecar is up and running, it will likely not fail. It is a technical microservice which has no business logic. If you have Kubernetes set up correctly with health checks and resource constraints, it will just deal with it. I do not want to rule out that Dapr Pub-Sub might contain bugs, but if you execute integration and load tests during development, you will probably not run into them in production. You as a software architect must decide if the additional investment to implement the Transactional Outbox pattern is worth the effort.
 
-My two cents: if you run on a properly configured Kubernetes cluster, you can get away without the Transactional Outbox pattern. If you use dapper in other contexts, for example simple docker-compose on Raspberry Pi(s), I would tend to implement a Transactional Outbox pattern - especially if I must not loose any events.  
-
-## TLDR; - Too Long, Didn't Read
-
-The Transactional Outbox pattern is the safest way to not loose events in a distributed system. When implementing it, you should consider the following points:
-
-- Can you afford the performance overhead? The additional database round trips might affect scalability.
-- Can you afford to implement it? Especially an efficient and robust outbox processor can be tricky. Expect little to no framework/library support in the .NET ecosystem (the only one I know is [CosmosDB](https://learn.microsoft.com/en-us/azure/architecture/best-practices/transactional-outbox-cosmos)).
-- How important is not loosing events in your domain? This can range from some missing notifications in a web frontend to orders not being processed properly.
-- How likely is it that all involved processes are unavailable at the same time? Are the resiliency features of your existing infrastructure good enough for your project?
+My two cents: if you run on a properly configured Kubernetes cluster, you can get away without the Transactional Outbox pattern. If you use Dapr in other contexts, for example simple docker-compose on Raspberry Pi(s), I would tend to implement a Transactional Outbox pattern - especially if I must not lose any events.  
 
 As always, the correct answer is: "it depends". I hope this post gave you enough food for thought to make the right decisions for your project.
