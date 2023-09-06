@@ -100,3 +100,97 @@ Please keep in mind: you must not set the `GCHeapCount` option when using one of
 The default GC mode for ASP.NET Core is not intuitive in my opinion: it will use Server GC mode, unless you execute your app in an environment where it only has a single CPU core available. In that case, Workstation GC mode will be selected. So be particularly careful when you specify the constraints for your app in Docker, Kubernetes or Cloud environments where you might suddenly end up in another GC mode than you expected.
 
 Of course, DATAS will not be activated by default; you have to explicitly enable it. I suspect this will change in the future, probably with .NET 9. The regions feature was handled in a similar way: it was introduced in .NET 6, but only activated by default in .NET 7.
+
+## About the benchmarks
+
+The code that was used to produce the graphs above is a simple ASP.NET Core Minimal API with a single endpoint, which looks like this:
+
+```csharp
+using System.Threading;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+
+namespace WebApp;
+
+public static class Endpoint
+{
+    private static ulong _numberOfCalls;
+    private static int[]? _currentArray;
+
+    public static void MapEndpoint(this WebApplication app)
+    {
+        app.MapGet(
+            "/api/call",
+            () =>
+            {
+                var numberOfCalls = Interlocked.Increment(ref _numberOfCalls);
+                if (numberOfCalls != 0 && numberOfCalls % 1000 == 0)
+                {
+                    var largeArray = new int[30_000];
+                    Interlocked.Exchange(ref _currentArray, largeArray);
+                }
+
+                return Results.Ok(new NumberOfCallsDto(numberOfCalls));
+            }
+        );
+    }
+}
+
+public sealed record NumberOfCallsDto(ulong NumberOfCalls);
+```
+
+When the endpoint is called, the _numberOfCalls is incremented by using the lock-free `Interlocked.Increment` method to avoid concurrency issues (several requests hitting the endpoint at once). Every 1000th call, a new large array is allocated in the LOH and the reference to the previous array is exchanged with the new one (see violet area in the diagrams). This is done to simulate a scenario where your app allocates memory during runtime. Also, the endpoint allocates memory by allocating a `NumberOfCallsDto` every call on the SOH (blue, green, and red areas in the diagram).
+
+This endpoint is then called via [NBomber](https://nbomber.com/), a load testing tool for .NET. The client looks like this:
+
+```csharp
+using System;
+using System.Net.Http;
+using NBomber.CSharp;
+using NBomber.Http.CSharp;
+
+namespace BomberClient;
+
+public static class Program
+{
+    public static void Main()
+    {
+        const int numberOfCallsPerInterval = 300;
+        var interval = TimeSpan.FromSeconds(1);
+
+        using var httpClient = new HttpClient();
+        var scenario =
+            Scenario
+               .Create(
+                    "bomb_web_app",
+                    async _ =>
+                    {
+                        var request = Http.CreateRequest("GET", "http://localhost:5000/api/call");
+
+                        // ReSharper disable once AccessToDisposedClosure
+                        // HttpClient will not be disposed when this lambda is called
+                        return await Http.Send(httpClient, request);
+                    })
+               .WithoutWarmUp()
+               .WithLoadSimulations(
+                    Simulation.RampingInject(numberOfCallsPerInterval, interval, TimeSpan.FromSeconds(20)),
+                    Simulation.Inject(numberOfCallsPerInterval, interval, TimeSpan.FromMinutes(7)),
+                    Simulation.RampingInject(0, interval, TimeSpan.FromSeconds(10))
+                );
+
+        NBomberRunner.RegisterScenarios(scenario).Run();
+    }
+}
+```
+
+Here, we instatiate a scenario which will ramp up to 300 calls per second in 20 seconds, then stay at this rate for 7 minutes, and then ramp down to zero calls per second in 10 seconds. Requests are sent to the endpoint using the NBomber.Http package.
+
+The source code for this post can be found here: https://github.com/thinktecture/feO2x-publishing/tree/datas/2023-08-31_DATAS/Code
+
+The tests were executed on the following machine:
+
+- AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
+- 64 GB DDR4-3400 RAM
+- Windows 11 Pro 22621.2134
+
+Performance data was captured with JetBrains dotMemory 2023.2.1 and Perfview 3.1.5.
