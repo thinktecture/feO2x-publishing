@@ -14,7 +14,6 @@ RUN dotnet publish \
     -c Release \
     -r linux-musl-x64 \
     -o /app \
-    /p:InvariantGlobalization=true \
     --no-restore 
 
 FROM prepare AS final
