@@ -1,0 +1,20 @@
+﻿FROM ubuntu:22.04 AS prepare
+WORKDIR /app
+RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0.100-rc.2-jammy AS build
+RUN apt update && apt upgrade -y
+RUN apt install -y clang zlib1g-dev
+WORKDIR /code
+COPY ./WebApp.csproj .
+RUN dotnet restore -r linux-x64
+COPY . .
+RUN dotnet publish \
+    -c Release \
+    -r linux-x64 \
+    -o /app \
+    --no-restore 
+
+FROM prepare AS final
+COPY --chown=appuser --from=build /app/WebApp ./WebApp
