@@ -10,5 +10,8 @@ await app.StartAsync();
 
 TimeSpan elapsedStartupTime = Stopwatch.GetElapsedTime(initialTimestamp);
 Console.WriteLine($"Startup took {elapsedStartupTime.TotalMilliseconds:N3}ms");
- 
+
+double workingSet = Process.GetCurrentProcess().WorkingSet64;
+Console.WriteLine($"Working Set: {workingSet / (1024 * 1024):N2}MB");
+
 await app.StopAsync();
