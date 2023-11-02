@@ -3,7 +3,12 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 
 long initialTimestamp = Stopwatch.GetTimestamp();
-var builder = WebApplication.CreateBuilder(args);
+var builder =
+#if IS_NATIVE_AOT
+    WebApplication.CreateSlimBuilder(args);
+#else
+    WebApplication.CreateBuilder(args);
+#endif
 var app = builder.Build();
 app.MapGet("/", () => "Hello World!");
 await app.StartAsync();
