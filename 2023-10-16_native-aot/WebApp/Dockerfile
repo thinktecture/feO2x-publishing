@@ -4,11 +4,11 @@ RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0.100-rc.2-alpine3.18 AS build
-ARG RUNTIME_ID=linux-musl-x64
 RUN apk update && apk upgrade
 RUN apk add --no-cache clang build-base zlib-dev
 WORKDIR /code
 COPY ./WebApp.csproj .
+ARG RUNTIME_ID=linux-musl-x64
 RUN dotnet restore -r $RUNTIME_ID
 COPY . .
 RUN dotnet publish \

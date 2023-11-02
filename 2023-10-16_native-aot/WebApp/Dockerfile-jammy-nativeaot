@@ -4,11 +4,11 @@ RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0.100-rc.2-jammy AS build
-ARG RUNTIME_ID=linux-x64
 RUN apt update && apt upgrade -y
 RUN apt install -y clang zlib1g-dev
 WORKDIR /code
 COPY ./WebApp.csproj .
+ARG RUNTIME_ID=linux-x64
 RUN dotnet restore -r $RUNTIME_ID
 COPY . .
 RUN dotnet publish \
