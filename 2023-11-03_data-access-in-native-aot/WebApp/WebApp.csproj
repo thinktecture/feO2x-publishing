@@ -17,6 +17,7 @@
     <ItemGroup>
         <EmbeddedResource Include="DatabaseAccess\DatabaseSetup.sql" />
         <EmbeddedResource Include="Contacts\GetContacts\GetContacts.sql" />
+        <EmbeddedResource Include="Contacts\GetContact\GetContact.sql" />
     </ItemGroup>
 
 

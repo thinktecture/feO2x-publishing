@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using WebApp.CommonValidation;
 using WebApp.Contacts;
 using WebApp.DatabaseAccess;
 using WebApp.JsonAccess;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         builder.Services
                .AddDatabaseAccess(builder.Configuration)
                .AddJsonAccess()
+               .AddCommonValidation()
                .AddContactsModule()
                .AddHealthChecks();
         return builder;

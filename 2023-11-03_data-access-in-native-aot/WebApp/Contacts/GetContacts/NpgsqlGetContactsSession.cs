@@ -32,8 +32,8 @@ public sealed class NpgsqlGetContactsSession(NpgsqlConnection connection)
             var id = reader.GetGuid(0);
             var firstName = reader.GetString(1);
             var lastName = reader.GetString(2);
-            var email = reader.GetString(3);
-            var phoneNumber = reader.GetString(4);
+            var email = reader.GetOptional<string>(3);
+            var phoneNumber = reader.GetOptional<string>(4);
             contacts.Add(new (id, firstName, lastName, email, phoneNumber));
         }
 

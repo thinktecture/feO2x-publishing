@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using WebApp.Contacts.GetContact;
 using WebApp.Contacts.GetContacts;
 
 namespace WebApp.Contacts;
@@ -7,8 +8,10 @@ namespace WebApp.Contacts;
 public static class ContactsModule
 {
     public static IServiceCollection AddContactsModule(this IServiceCollection services) =>
-        services.AddGetContactsModule();
+        services.AddGetContactsModule()
+                .AddGetContactModule();
     
     public static WebApplication MapContactEndpoints(this WebApplication app) =>
-        app.MapGetContacts();
+        app.MapGetContacts()
+           .MapGetContact();
 }

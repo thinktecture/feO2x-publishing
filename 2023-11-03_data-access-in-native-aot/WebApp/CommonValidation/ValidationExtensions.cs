@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentValidation;
 
-namespace WebApp.Validation;
+namespace WebApp.CommonValidation;
 
 public static class ValidationExtensions
 {
