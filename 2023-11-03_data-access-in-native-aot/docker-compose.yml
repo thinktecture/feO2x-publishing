@@ -1,0 +1,40 @@
+services: 
+  database:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: webapp
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ContactsDb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - native-aot-data-access
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webapp"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      
+  webapp:
+    build: ./WebApp
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    networks:
+      - native-aot-data-access
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    environment:
+      CONNECTIONSTRINGS__DEFAULT: "Server=database; Port=5432; Database=ContactsDb; User Id=webapp; Password=password; Max Auto Prepare=100"
+
+networks:
+  native-aot-data-access:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local

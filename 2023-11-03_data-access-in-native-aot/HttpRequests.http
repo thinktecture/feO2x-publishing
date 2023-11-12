@@ -1,0 +1,5 @@
+﻿### HealthCheck
+http://localhost:5000/
+
+### GetContacts
+http://localhost:5000/api/contacts
