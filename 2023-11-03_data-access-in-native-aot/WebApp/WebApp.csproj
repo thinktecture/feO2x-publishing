@@ -15,9 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Contacts\CommonGetContact\GetContact.sql" />
         <EmbeddedResource Include="DatabaseAccess\DatabaseSetup.sql" />
         <EmbeddedResource Include="Contacts\GetContacts\GetContacts.sql" />
-        <EmbeddedResource Include="Contacts\GetContact\GetContact.sql" />
+        <EmbeddedResource Include="Contacts\DeleteContact\DeleteContact.sql" />
+        <EmbeddedResource Include="Contacts\DeleteContact\DeleteAddresses.sql" />
     </ItemGroup>
 
 

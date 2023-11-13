@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
@@ -38,21 +39,28 @@ public abstract class ReadOnlyNpgsqlSession(
         connection.Dispose();
     }
 
-    protected ValueTask<NpgsqlCommand> CreateCommandAsync(
-        string? sql = null,
-        CancellationToken cancellationToken = default
-    )
+    public ValueTask<NpgsqlCommand> CreateCommandAsync(string? sql = null,
+                                                       CancellationToken cancellationToken = default)
     {
         return IsInitialized ? new (CreateCommand(sql)) : InitializeAndCreateCommandAsync(sql, cancellationToken);
     }
 
-    private async ValueTask<NpgsqlCommand> InitializeAndCreateCommandAsync(
-        string? sql,
-        CancellationToken cancellationToken
-    )
+    public ValueTask<NpgsqlBatch> CreateBatchAsync(CancellationToken cancellationToken = default)
+    {
+        return IsInitialized ? new (CreateBatch()) : InitializeAndCreateBatchAsync(cancellationToken);
+    }
+
+    private async ValueTask<NpgsqlCommand> InitializeAndCreateCommandAsync(string? sql,
+                                                                           CancellationToken cancellationToken)
     {
         await InitializeAsync(cancellationToken);
         return CreateCommand(sql);
+    }
+
+    private async ValueTask<NpgsqlBatch> InitializeAndCreateBatchAsync(CancellationToken cancellationToken)
+    {
+        await InitializeAsync(cancellationToken);
+        return CreateBatch();
     }
 
     private async Task InitializeAsync(CancellationToken cancellationToken)
@@ -75,5 +83,12 @@ public abstract class ReadOnlyNpgsqlSession(
         }
 
         return command;
+    }
+
+    private NpgsqlBatch CreateBatch()
+    {
+        var batch = connection.CreateBatch();
+        batch.Transaction = Transaction;
+        return batch;
     }
 }

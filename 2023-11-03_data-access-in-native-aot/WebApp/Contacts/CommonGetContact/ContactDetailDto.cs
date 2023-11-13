@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApp.Contacts.GetContact;
+namespace WebApp.Contacts.CommonGetContact;
 
 public sealed record ContactDetailDto(Guid Id,
                                       string FirstName,

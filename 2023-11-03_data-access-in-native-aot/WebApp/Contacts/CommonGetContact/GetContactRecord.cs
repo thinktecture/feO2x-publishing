@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApp.Contacts.GetContact;
+namespace WebApp.Contacts.CommonGetContact;
 
 public readonly record struct GetContactRecord(Guid ContactId,
                                                string FirstName,

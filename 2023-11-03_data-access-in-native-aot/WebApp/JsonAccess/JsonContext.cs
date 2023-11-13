@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using WebApp.Contacts.CommonGetContact;
 using WebApp.Contacts.GetContact;
 using WebApp.Contacts.GetContacts;
 

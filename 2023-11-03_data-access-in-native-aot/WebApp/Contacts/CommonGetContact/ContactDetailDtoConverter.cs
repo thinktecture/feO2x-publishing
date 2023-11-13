@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApp.Contacts.GetContact;
+namespace WebApp.Contacts.CommonGetContact;
 
 public static class ContactDetailDtoConverter
 {

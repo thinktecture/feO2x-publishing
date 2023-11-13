@@ -12,3 +12,12 @@ http://localhost:5000/api/contacts/054AB8AC-369F-410C-9F66-140D1F240613
 
 ### GetContactCarol
 http://localhost:5000/api/contacts/CCC51159-2AC7-435B-B7D2-4CC25791622D
+
+### DeleteAlice
+DELETE http://localhost:5000/api/contacts/D10DF224-7E72-4CB0-94B2-81725D818A1C
+
+### DeleteBob
+DELETE http://localhost:5000/api/contacts/054AB8AC-369F-410C-9F66-140D1F240613
+
+### DeleteBob
+DELETE http://localhost:5000/api/contacts/CCC51159-2AC7-435B-B7D2-4CC25791622D

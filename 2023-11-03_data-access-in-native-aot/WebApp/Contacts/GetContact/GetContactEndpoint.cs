@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using WebApp.CommonValidation;
+using WebApp.Contacts.CommonGetContact;
 
 namespace WebApp.Contacts.GetContact;
 
@@ -23,8 +24,7 @@ public static class GetContactEndpoint
         if (validator.CheckForErrors(new GuidDto(id), out var errors))
             return Results.BadRequest(errors);
 
-        var contactRecords = await session.GetContactWithAddressesAsync(id, cancellationToken);
-        var contactDto = contactRecords.ConvertToDto();
+        var contactDto = await session.GetContactDetailDtoAsync(id, cancellationToken);
         if (contactDto is null)
             return Results.NotFound();
 
