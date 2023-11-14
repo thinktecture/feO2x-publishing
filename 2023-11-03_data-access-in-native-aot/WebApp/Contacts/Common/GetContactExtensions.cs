@@ -7,7 +7,7 @@ using Light.EmbeddedResources;
 using Npgsql;
 using WebApp.DatabaseAccess;
 
-namespace WebApp.Contacts.CommonGetContact;
+namespace WebApp.Contacts.Common;
 
 public static class GetContactExtensions
 {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using WebApp.CommonValidation;
-using WebApp.Contacts.CommonGetContact;
+using WebApp.Contacts.Common;
 
 namespace WebApp.Contacts.DeleteContact;
 

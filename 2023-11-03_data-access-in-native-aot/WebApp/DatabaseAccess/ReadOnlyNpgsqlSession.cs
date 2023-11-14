@@ -26,14 +26,14 @@ public abstract class ReadOnlyNpgsqlSession(
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         if (Transaction is not null)
             await Transaction.DisposeAsync();
         await connection.DisposeAsync();
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         Transaction?.Dispose();
         connection.Dispose();

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebApp.DatabaseAccess;
 
-namespace WebApp.Contacts.CommonGetContact;
+namespace WebApp.Contacts.Common;
 
 public interface IGetContactSession : IReadOnlySession
 {

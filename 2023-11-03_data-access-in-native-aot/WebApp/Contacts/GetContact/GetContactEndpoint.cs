@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using WebApp.CommonValidation;
-using WebApp.Contacts.CommonGetContact;
+using WebApp.Contacts.Common;
 
 namespace WebApp.Contacts.GetContact;
 

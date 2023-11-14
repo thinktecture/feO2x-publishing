@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using WebApp.Contacts.CommonGetContact;
+using WebApp.Contacts.Common;
 
 namespace WebApp.Contacts.GetContact;
 

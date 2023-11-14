@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS "Addresses" (
     "City" VARCHAR(255) NOT NULL,
     CONSTRAINT "FK_Addresses_Contacts" FOREIGN KEY ("ContactID") REFERENCES "Contacts"("Id")
 );
+
 INSERT INTO "Contacts" ("Id", "FirstName", "LastName", "Email", "PhoneNumber")
 VALUES
     ('D10DF224-7E72-4CB0-94B2-81725D818A1C', 'Alice', 'Smith', 'alice.smith@live.com', '555-1234'),

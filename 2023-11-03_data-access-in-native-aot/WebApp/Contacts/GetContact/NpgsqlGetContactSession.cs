@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
-using WebApp.Contacts.CommonGetContact;
+using WebApp.Contacts.Common;
 using WebApp.DatabaseAccess;
 
 namespace WebApp.Contacts.GetContact;

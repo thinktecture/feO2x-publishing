@@ -21,3 +21,63 @@ DELETE http://localhost:5000/api/contacts/054AB8AC-369F-410C-9F66-140D1F240613
 
 ### DeleteBob
 DELETE http://localhost:5000/api/contacts/CCC51159-2AC7-435B-B7D2-4CC25791622D
+
+### UpsertNewContact
+PUT http://localhost:5000/api/contacts
+Content-Type: application/json
+
+{
+    "id": "146FA87E-D6D7-464F-8801-69838E5387E9",
+    "firstName": "Michael",
+    "lastName": "Brown",
+    "email": "michael.brown@gmail.com",
+    "addresses": [
+        {
+            "id": "322F9F9C-0695-4D76-88C5-49B76513077C",
+            "street": "578 Baker Street",
+            "zipCode": "53779",
+            "city": "Silver Lake"
+        }
+    ]
+}
+
+### UpsertAlice
+PUT http://localhost:5000/api/contacts
+Content-Type: application/json
+
+{
+    "id": "D10DF224-7E72-4CB0-94B2-81725D818A1C",
+    "firstName": "Alice",
+    "lastName": "Smith-Henson",
+    "email": "alice.smith@live.com",
+    "phoneNumber": "555-9875",
+    "addresses": [
+        {
+            "id": "E3F45628-00E6-4CB7-99C9-A45DDDC49615",
+            "street": "123 Maple Street",
+            "zipCode": "90210",
+            "city": "Springfield"
+        },
+        {
+            "id": "D5B6EBA1-D55F-4426-8E18-7D7B5CF86682",
+            "street": "599 Castle Road",
+            "zipCode": "90210",
+            "city": "Springfield"
+        }
+    ]
+}
+
+### UpsertInvalidContact
+PUT http://localhost:5000/api/contacts
+Content-Type: application/json
+
+{
+    "firstName": "In",
+    "lastName": "Valid",
+    "email": "invalid email",
+    "addresses": [
+        {
+            "street": "Some street, but missing zipcode and city"
+        }
+    ]
+}
