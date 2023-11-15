@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Npgsql;
 using Serilog;
 using WebApp.CompositionRoot;
 using WebApp.DatabaseAccess;
