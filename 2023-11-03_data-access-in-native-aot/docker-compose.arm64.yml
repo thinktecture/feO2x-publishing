@@ -1,0 +1,6 @@
+services:
+  webapp:
+    build:
+      context: ./WebApp
+      args:
+        RUNTIME_ID: linux-musl-arm64
