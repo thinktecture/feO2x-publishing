@@ -5,7 +5,7 @@ USER appuser
 ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5000
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0.100-rc.2-alpine3.18 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine3.18 AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache curl clang build-base zlib-dev
 WORKDIR /code
