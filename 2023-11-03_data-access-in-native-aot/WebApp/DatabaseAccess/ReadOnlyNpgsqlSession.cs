@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
